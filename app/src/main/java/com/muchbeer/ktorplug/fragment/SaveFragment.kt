@@ -14,11 +14,15 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.muchbeer.ktorplug.R
 import com.muchbeer.ktorplug.data.DataState
 import com.muchbeer.ktorplug.data.PostRequest
+import com.muchbeer.ktorplug.data.PostResponse
 import com.muchbeer.ktorplug.databinding.FragmentSaveBinding
 import com.muchbeer.ktorplug.exhaustive
 import com.muchbeer.ktorplug.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromJsonElement
 
 @AndroidEntryPoint
 class SaveFragment : Fragment() {
@@ -61,9 +65,10 @@ class SaveFragment : Fragment() {
                         is DataState.ErrorException -> showError(dataState.exception.message.toString())
                         DataState.Loading -> showError("Loading......")
                         is DataState.Success -> {
+
                             Log.d("SaveFragment", "the request data response is :" +
                                     " ${dataState.data!!.body}")
-                        }
+                                  }
                     }.exhaustive
                 }
             }

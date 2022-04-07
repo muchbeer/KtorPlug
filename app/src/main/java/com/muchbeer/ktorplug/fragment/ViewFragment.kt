@@ -24,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.encodeToStream
 import kotlinx.serialization.serializer
 
@@ -58,16 +59,14 @@ class ViewFragment : Fragment() {
                         is DataState.ErrorException -> showError(dataState.exception.message.toString())
                         DataState.Loading -> showError("Loading...")
                         is DataState.Success -> {
+                            val gsonPretty = GsonBuilder().setPrettyPrinting().create()
+                            val jsonDBListPretty: String = gsonPretty.toJson(dataState.data)
+
 
                             val postsSerializer = ListSerializer(PostResponse.serializer())
-                            val json = Json.encodeToString(postsSerializer, dataState.data)
-                            Log.d("ViewFragment", "the fetch data is $json}")
-                   /*         for (datum in dataState.data) {
-                                Log.d("ViewFragment", "the fetch data is :" +
-                                        " ${datum.title}")
-                               }*/
+                            val json = Json.encodeToJsonElement(postsSerializer, dataState.data)
+                            Log.d("ViewFragment", "the fetch data is $jsonDBListPretty}")
                             }
-
                     }.exhaustive
                 }
             }
