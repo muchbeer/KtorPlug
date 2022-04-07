@@ -13,12 +13,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
-import com.muchbeer.ktorplug.R
+import com.muchbeer.ktorplug.*
 import com.muchbeer.ktorplug.data.DataState
 import com.muchbeer.ktorplug.data.PostRequest
 import com.muchbeer.ktorplug.data.PostResponse
 import com.muchbeer.ktorplug.databinding.FragmentViewBinding
-import com.muchbeer.ktorplug.exhaustive
 import com.muchbeer.ktorplug.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -41,39 +40,26 @@ class ViewFragment : Fragment() {
         binding = FragmentViewBinding.inflate(inflater, container , false)
 
         binding.btnView.setOnClickListener {
-            viewPostedData()
+          //  viewPostedData()
+            easyViewPostData()
         }
         return binding.root
     }
 
     @Suppress("IMPLICIT_CAST_TO_ANY")
-    private fun viewPostedData() {
+    private fun easyViewPostData() {
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            // repeatOnLifecycle launches the block in a new coroutine every time the
-            // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.retrievePost.collect{ dataState ->
-                    when(dataState){
-                        is DataState.Error -> showError(dataState.error)
-                        is DataState.ErrorException -> showError(dataState.exception.message.toString())
-                        DataState.Loading -> showError("Loading...")
-                        is DataState.Success -> {
-                            val gsonPretty = GsonBuilder().setPrettyPrinting().create()
-                            val jsonDBListPretty: String = gsonPretty.toJson(dataState.data)
-
-
-                            val postsSerializer = ListSerializer(PostResponse.serializer())
-                            val json = Json.encodeToJsonElement(postsSerializer, dataState.data)
-                            Log.d("ViewFragment", "the fetch data is $jsonDBListPretty}")
-                            }
-                    }.exhaustive
-                }
+            collectActivityFlow(viewModel.retrievePost) { dataState ->
+                Log.d("ViewFragment", "Enter the collect")
+                when (dataState) {
+                    is DataState.Error -> requireContext().showMessage(dataState.error)
+                    is DataState.ErrorException -> requireContext().showMessage(dataState.exception.message.toString())
+                    DataState.Loading -> requireContext().showMessage("Loading...")
+                    is DataState.Success -> {
+                        logPrettyJson(dataModel = dataState.data)
+                    }
+                }.exhaustive
             }
-        }
     }
 
-    private fun showError(msgError : String) {
-        Toast.makeText(requireContext(), msgError, Toast.LENGTH_LONG).show()
-    }
 }

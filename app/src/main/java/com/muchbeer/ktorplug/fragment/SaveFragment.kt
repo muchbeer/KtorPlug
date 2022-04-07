@@ -11,12 +11,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.muchbeer.ktorplug.R
+import com.muchbeer.ktorplug.*
 import com.muchbeer.ktorplug.data.DataState
 import com.muchbeer.ktorplug.data.PostRequest
 import com.muchbeer.ktorplug.data.PostResponse
 import com.muchbeer.ktorplug.databinding.FragmentSaveBinding
-import com.muchbeer.ktorplug.exhaustive
 import com.muchbeer.ktorplug.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -55,27 +54,15 @@ class SaveFragment : Fragment() {
     @Suppress("IMPLICIT_CAST_TO_ANY")
     private fun sendPostData(request: PostRequest) {
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            // repeatOnLifecycle launches the block in a new coroutine every time the
-            // lifecycle is in the STARTED state (or above) and cancels it when it's STOPPED.
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.sendStatus(request).collect{ dataState ->
-                    when(dataState){
-                        is DataState.Error -> showError(dataState.error)
-                        is DataState.ErrorException -> showError(dataState.exception.message.toString())
-                        DataState.Loading -> showError("Loading......")
-                        is DataState.Success -> {
+        collectActivityFlow( viewModel.sendStatus(request)) {  dataState ->
 
-                            Log.d("SaveFragment", "the request data response is :" +
-                                    " ${dataState.data!!.body}")
-                                  }
-                    }.exhaustive
-                }
-            }
+            when(dataState){
+                is DataState.Error -> requireContext().showMessage(dataState.error)
+                is DataState.ErrorException -> requireContext().showMessage(dataState.exception.message.toString())
+                DataState.Loading -> requireContext().showMessage("Loading....")
+                is DataState.Success -> { logPrettyJson(dataModel = dataState.data) }
+            }.exhaustive
         }
     }
 
-    private fun showError(msgError : String) {
-        Toast.makeText(requireContext(), msgError, Toast.LENGTH_LONG).show()
-    }
 }
