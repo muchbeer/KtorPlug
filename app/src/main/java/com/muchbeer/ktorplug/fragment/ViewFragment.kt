@@ -52,9 +52,9 @@ class ViewFragment : Fragment() {
             collectActivityFlow(viewModel.retrievePost) { dataState ->
                 Log.d("ViewFragment", "Enter the collect")
                 when (dataState) {
-                    is DataState.Error -> requireContext().showMessage(dataState.error)
-                    is DataState.ErrorException -> requireContext().showMessage(dataState.exception.message.toString())
-                    DataState.Loading -> requireContext().showMessage("Loading...")
+                    is DataState.Error -> logs(TAG,  dataState.error)
+                    is DataState.ErrorException -> logs(TAG,  dataState.exception.message.toString())
+                    DataState.Loading -> requireContext().toastMsg("Loading...")
                     is DataState.Success -> {
                         logPrettyJson(dataModel = dataState.data)
                     }
@@ -62,4 +62,7 @@ class ViewFragment : Fragment() {
             }
     }
 
+    companion object {
+        private val TAG = ViewFragment::class.simpleName.toString()
+    }
 }

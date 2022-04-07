@@ -12,17 +12,20 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.gson.GsonBuilder
 import com.muchbeer.ktorplug.data.DataState
+import com.muchbeer.ktorplug.data.ImageResponse
 import com.muchbeer.ktorplug.data.PostRequest
 import com.muchbeer.ktorplug.data.PostResponse
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import java.io.File
 import java.lang.Exception
 import java.net.UnknownHostException
 
@@ -30,6 +33,9 @@ object PostConstant {
 
     private const val _BASE_URL = BuildConfig.BASE_URL
     const val BASE_URL = _BASE_URL + "posts"
+
+    private const val _LINK_URL = BuildConfig.LINK_URL
+    const val LINK_URL = _LINK_URL + "home/Api.php?apicall=upload"
 
     private const val TIME_OUT = 60_000
 }
@@ -57,9 +63,6 @@ fun <T> Fragment.collectActivityFlow (stateFlow: StateFlow<T>, collect: suspend 
     }
 }
 
- fun Context.showMessage(msg : String) {
-     Log.d("ViewFragment", "The error is : $msg")
-}
 @Suppress("IMPLICIT_CAST_TO_ANY")
  fun<T> useWhenStatement(inputData: DataState<T>, msg : ()-> Unit,
           loader: ()->Unit, exception: () ->Unit, sucessData : (T) ->Unit) {
@@ -69,6 +72,42 @@ fun <T> Fragment.collectActivityFlow (stateFlow: StateFlow<T>, collect: suspend 
         DataState.Loading -> loader
         is DataState.Success -> sucessData(inputData.data)
     }.exhaustive
+}
+
+ inline fun<reified T> handleImageUpload(httpClient: HttpClient, file : File) :
+        Flow<DataState<T>> = flow{
+    emit(DataState.Loading)
+
+    try {
+        val response : T = httpClient.submitFormWithBinaryData(
+            url = PostConstant.LINK_URL,
+            formData = formData {
+                append("desc", "Gianna")
+                append(
+                    key = "image",
+                    file!!.readBytes(), Headers.build {
+                        append(HttpHeaders.ContentType, "image/png")
+                        append(HttpHeaders.ContentDisposition, "filename=ktor_logo.png")
+                    })
+            }
+        ) {
+            onUpload { bytesSentTotal, contentLength ->
+                println("Sent $bytesSentTotal bytes from $contentLength")
+            }
+        }
+        emit(DataState.Success(response))
+    } catch (e: RedirectResponseException) {
+        //3xx
+        emit(DataState.Error(error = e.response.status.description))
+    } catch ( e : ClientRequestException) {
+        emit(DataState.Error(error = e.response.status.description))
+    } catch (e : ServerResponseException) {
+        emit(DataState.Error(error = e.response.status.description))
+    } catch (e : Exception) {
+        emit(DataState.Error(error = e.message.toString()))
+    } catch (e : UnknownHostException) {
+        emit(DataState.Error(error = e.message.toString()))
+    }
 }
 
 inline fun<reified T> handleGetState(httpClient : HttpClient, getUrl : String) :
@@ -129,4 +168,10 @@ fun<T> logPrettyJson (dataModel : T) {
     val gsonPretty = GsonBuilder().setPrettyPrinting().create()
     val jsonDBListPretty: String = gsonPretty.toJson(dataModel)
     Log.d("ViewFragment", "the fetch data is $jsonDBListPretty}")
+}
+
+fun logs(className: String, msg: String) {  Log.d(className, msg) }
+
+fun Context.toastMsg(msg: String) {
+    Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
 }

@@ -12,19 +12,22 @@ import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
+import io.ktor.http.cio.*
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object ApiModule {
 
+
     @Singleton
     @Provides
     fun provideKtorHttpClient(): HttpClient {
-        return HttpClient(Android) {
+        return HttpClient() {
             // Logging
             install(Logging) {
-                level = LogLevel.ALL
+                level = LogLevel.BODY
             }
             // JSON
             install(JsonFeature) {
@@ -38,7 +41,7 @@ object ApiModule {
             // Timeout
             install(HttpTimeout) {
                 requestTimeoutMillis = 15000L
-                connectTimeoutMillis = 15000L
+                connectTimeoutMillis = 90000L
                 socketTimeoutMillis = 15000L
             }
 

@@ -57,12 +57,15 @@ class SaveFragment : Fragment() {
         collectActivityFlow( viewModel.sendStatus(request)) {  dataState ->
 
             when(dataState){
-                is DataState.Error -> requireContext().showMessage(dataState.error)
-                is DataState.ErrorException -> requireContext().showMessage(dataState.exception.message.toString())
-                DataState.Loading -> requireContext().showMessage("Loading....")
+                is DataState.Error -> logs(TAG,  dataState.error)
+                is DataState.ErrorException -> logs(TAG,  dataState.exception.message.toString())
+                DataState.Loading -> requireContext().toastMsg("Loading...")
                 is DataState.Success -> { logPrettyJson(dataModel = dataState.data) }
             }.exhaustive
         }
     }
 
+    companion object {
+        private val TAG = SaveFragment::class.simpleName.toString()
+    }
 }

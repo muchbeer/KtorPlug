@@ -9,4 +9,8 @@
         android:id="@+id/viewFragment"
         android:icon="@drawable/ic_view"
         android:title="@string/title_retrieve" />
+
+    <item android:id="@+id/imageFragment"
+        android:icon="@drawable/ic_photo"
+        android:title="Image" />
 </menu>
