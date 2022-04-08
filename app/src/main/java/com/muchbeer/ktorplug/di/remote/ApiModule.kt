@@ -1,4 +1,4 @@
-package com.muchbeer.ktorplug.di
+package com.muchbeer.ktorplug.di.remote
 
 import com.muchbeer.ktorplug.repository.PostRepository
 import com.muchbeer.ktorplug.repository.PostRepositoryImpl

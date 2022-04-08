@@ -1,8 +1,7 @@
-package com.muchbeer.ktorplug.fragment
+package com.muchbeer.ktorplug.presentation.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,15 +10,16 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.muchbeer.ktorplug.*
-import com.muchbeer.ktorplug.data.DataState
+import com.muchbeer.ktorplug.data.remote.DataState
 import com.muchbeer.ktorplug.databinding.FragmentImageBinding
+import com.muchbeer.ktorplug.utility.collectflow.collectActivityFlow
+import com.muchbeer.ktorplug.utility.exhaustive
+import com.muchbeer.ktorplug.utility.logPrettyJson
+import com.muchbeer.ktorplug.utility.logs
+import com.muchbeer.ktorplug.utility.toastMsg
 import com.muchbeer.ktorplug.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import java.io.File
 
 
@@ -43,7 +43,7 @@ class ImageFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         binding = FragmentImageBinding.inflate(inflater, container, false)
 

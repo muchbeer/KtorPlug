@@ -1,27 +1,21 @@
-package com.muchbeer.ktorplug.fragment
+package com.muchbeer.ktorplug.presentation.fragment
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.muchbeer.ktorplug.*
-import com.muchbeer.ktorplug.data.DataState
-import com.muchbeer.ktorplug.data.PostRequest
-import com.muchbeer.ktorplug.data.PostResponse
+import com.muchbeer.ktorplug.data.remote.DataState
+import com.muchbeer.ktorplug.data.remote.sampledto.PostRequestDto
 import com.muchbeer.ktorplug.databinding.FragmentSaveBinding
+import com.muchbeer.ktorplug.utility.collectflow.collectActivityFlow
+import com.muchbeer.ktorplug.utility.exhaustive
+import com.muchbeer.ktorplug.utility.logPrettyJson
+import com.muchbeer.ktorplug.utility.logs
+import com.muchbeer.ktorplug.utility.toastMsg
 import com.muchbeer.ktorplug.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromJsonElement
 
 @AndroidEntryPoint
 class SaveFragment : Fragment() {
@@ -32,7 +26,7 @@ class SaveFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         binding = FragmentSaveBinding.inflate(inflater, container, false)
 
@@ -40,7 +34,7 @@ class SaveFragment : Fragment() {
 
         binding.btnSend.setOnClickListener {
             sendPostData(
-                PostRequest(
+                PostRequestDto(
                     body = binding.edtBody.text.toString(),
                     title = binding.edtTitle.text.toString(),
                     userId = randamInt
@@ -48,11 +42,12 @@ class SaveFragment : Fragment() {
             )
         }
 
-
         return binding.root
     }
+
+
     @Suppress("IMPLICIT_CAST_TO_ANY")
-    private fun sendPostData(request: PostRequest) {
+    private fun sendPostData(request: PostRequestDto) {
 
         collectActivityFlow( viewModel.sendStatus(request)) {  dataState ->
 

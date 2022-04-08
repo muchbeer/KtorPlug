@@ -1,4 +1,4 @@
-package com.muchbeer.ktorplug.fragment
+package com.muchbeer.ktorplug.presentation.fragment
 
 import android.os.Bundle
 import android.util.Log
@@ -6,26 +6,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
 import com.muchbeer.ktorplug.*
-import com.muchbeer.ktorplug.data.DataState
-import com.muchbeer.ktorplug.data.PostRequest
-import com.muchbeer.ktorplug.data.PostResponse
+import com.muchbeer.ktorplug.data.remote.DataState
 import com.muchbeer.ktorplug.databinding.FragmentViewBinding
+import com.muchbeer.ktorplug.utility.collectflow.collectActivityFlow
+import com.muchbeer.ktorplug.utility.exhaustive
+import com.muchbeer.ktorplug.utility.logPrettyJson
+import com.muchbeer.ktorplug.utility.logs
+import com.muchbeer.ktorplug.utility.toastMsg
 import com.muchbeer.ktorplug.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.encodeToJsonElement
-import kotlinx.serialization.json.encodeToStream
-import kotlinx.serialization.serializer
 
 @AndroidEntryPoint
 class ViewFragment : Fragment() {
@@ -35,7 +26,7 @@ class ViewFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         binding = FragmentViewBinding.inflate(inflater, container , false)
 

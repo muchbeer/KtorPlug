@@ -1,91 +1,31 @@
-package com.muchbeer.ktorplug
+package com.muchbeer.ktorplug.utility
 
-import android.content.Context
-import android.util.Log
-import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.google.gson.GsonBuilder
-import com.muchbeer.ktorplug.data.DataState
-import com.muchbeer.ktorplug.data.ImageResponse
-import com.muchbeer.ktorplug.data.PostRequest
-import com.muchbeer.ktorplug.data.PostResponse
+import com.muchbeer.ktorplug.data.remote.DataState
+import com.muchbeer.ktorplug.data.remote.sampledto.PostRequestDto
 import io.ktor.client.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.http.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.Exception
 import java.net.UnknownHostException
 
-object PostConstant {
 
-    private const val _BASE_URL = BuildConfig.BASE_URL
-    const val BASE_URL = _BASE_URL + "posts"
-
-    private const val _LINK_URL = BuildConfig.LINK_URL
-    const val LINK_URL = _LINK_URL + "home/Api.php?apicall=upload"
-
-    private const val TIME_OUT = 60_000
-}
-
-
-fun <T> Fragment.collectLatestLifecylceFlow (stateFlow: Flow<T>, collect: suspend (T)->Unit) {
-     viewLifecycleOwner.lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-           // stateFlow.collectLatest(collect)
-            stateFlow.collect {
-                collect(it)
-            }
-        }
-    }
-}
-
-fun <T> Fragment.collectActivityFlow (stateFlow: StateFlow<T>, collect: suspend (T)->Unit) {
-    viewLifecycleOwner.lifecycleScope.launch {
-        repeatOnLifecycle(Lifecycle.State.STARTED) {
-            // stateFlow.collectLatest(collect)
-            stateFlow.collectLatest {
-                collect(it)
-            }
-        }
-    }
-}
-
-@Suppress("IMPLICIT_CAST_TO_ANY")
- fun<T> useWhenStatement(inputData: DataState<T>, msg : ()-> Unit,
-          loader: ()->Unit, exception: () ->Unit, sucessData : (T) ->Unit) {
-    when(inputData){
-        is DataState.Error -> msg
-        is DataState.ErrorException -> exception
-        DataState.Loading -> loader
-        is DataState.Success -> sucessData(inputData.data)
-    }.exhaustive
-}
-
- inline fun<reified T> handleImageUpload(httpClient: HttpClient, file : File) :
+inline fun<reified T> handleImageUpload(httpClient: HttpClient, file : File) :
         Flow<DataState<T>> = flow{
     emit(DataState.Loading)
 
     try {
         val response : T = httpClient.submitFormWithBinaryData(
-            url = PostConstant.LINK_URL,
+            url = PostConstant.LINK_URL_IMAGE,
             formData = formData {
                 append("desc", "Gianna")
                 append(
                     key = "image",
-                    file!!.readBytes(), Headers.build {
+                    file.readBytes(), Headers.build {
                         append(HttpHeaders.ContentType, "image/png")
                         append(HttpHeaders.ContentDisposition, "filename=ktor_logo.png")
                     })
@@ -111,7 +51,7 @@ fun <T> Fragment.collectActivityFlow (stateFlow: StateFlow<T>, collect: suspend 
 }
 
 inline fun<reified T> handleGetState(httpClient : HttpClient, getUrl : String) :
-                            Flow<DataState<T>> =  flow {
+        Flow<DataState<T>> =  flow {
 
     emit(DataState.Loading)
     try {
@@ -136,7 +76,8 @@ inline fun<reified T> handleGetState(httpClient : HttpClient, getUrl : String) :
 
 
 inline fun<reified T> handlePostState(httpClient : HttpClient, postUrl : String,
-                                            postRequest: PostRequest) :
+                                      postRequest: PostRequestDto
+) :
         Flow<DataState<T>> =  flow {
 
     emit(DataState.Loading)
@@ -160,18 +101,4 @@ inline fun<reified T> handlePostState(httpClient : HttpClient, postUrl : String,
     } catch (e : UnknownHostException) {
         emit(DataState.Error(error = e.message.toString()))
     }
-}
-val <T> T.exhaustive : T
-    get() = this
-
-fun<T> logPrettyJson (dataModel : T) {
-    val gsonPretty = GsonBuilder().setPrettyPrinting().create()
-    val jsonDBListPretty: String = gsonPretty.toJson(dataModel)
-    Log.d("ViewFragment", "the fetch data is $jsonDBListPretty}")
-}
-
-fun logs(className: String, msg: String) {  Log.d(className, msg) }
-
-fun Context.toastMsg(msg: String) {
-    Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
 }

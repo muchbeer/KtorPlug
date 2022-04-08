@@ -1,10 +1,10 @@
-package com.muchbeer.ktorplug.data
+package com.muchbeer.ktorplug.data.remote.sampledto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ImageResponse(
+data class ImageResponseDto(
     @SerialName("error")
     val error : Boolean,
     @SerialName("message")
