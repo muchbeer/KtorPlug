@@ -31,7 +31,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ApiModule {
 
-
     @Singleton
     @Provides
     fun provideKtorHttpClient(): HttpClient {
@@ -66,8 +65,6 @@ object ApiModule {
         }
     }
 
-
-
     @Singleton
     @Provides
     fun providePreferencesDataStore(@ApplicationContext appContext: Context) :
@@ -89,7 +86,7 @@ object ApiModule {
 
     @Singleton
     @Provides
-    fun providePostRepository(httpClient: HttpClient, dataPref : DataStoreprefImpl) : PostRepository {
+    fun providePostRepository(httpClient: HttpClient) : PostRepository {
         return PostRepositoryImpl(httpclient = httpClient)
     }
 

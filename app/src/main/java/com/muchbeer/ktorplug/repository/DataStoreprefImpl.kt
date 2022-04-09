@@ -48,4 +48,12 @@ class DataStoreprefImpl @Inject constructor(private val dataStore: DataStore<Pre
 
     override fun retrieveName(): Flow<String>  = retrievValueFlow(FULL_NAME, "muchbeer")
 
+    override suspend fun deleteAllData() {
+        dataStore.edit { preference ->
+            preference.clear()
+            //in case you want to remove specific key please use
+          //  preference.remove(FULL_NAME)
+        }
+    }
+
 }
