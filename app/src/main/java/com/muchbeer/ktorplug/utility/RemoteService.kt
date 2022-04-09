@@ -55,13 +55,11 @@ inline fun<reified T> handleGetState(httpClient : HttpClient, getUrl : String) :
 
     emit(DataState.Loading)
     try {
-        //  emit(DataState.Success(listOf(PostResponse("georgeFamily","family", 1, 1))))
-        val retrievePost : T =   httpClient.get<T> {
+        val retrievePost : T =   httpClient.get {
             url(getUrl)
         }
         emit(DataState.Success(retrievePost))
     }  catch (e: RedirectResponseException) {
-        //3xx
         emit(DataState.Error(error = e.response.status.description))
     } catch ( e : ClientRequestException) {
         emit(DataState.Error(error = e.response.status.description))
@@ -82,8 +80,8 @@ inline fun<reified T> handlePostState(httpClient : HttpClient, postUrl : String,
 
     emit(DataState.Loading)
     try {
-        //  emit(DataState.Success(listOf(PostResponse("georgeFamily","family", 1, 1))))
-        val postData : T =   httpClient.post<T>() {
+
+        val postData : T =   httpClient.post {
             url(postUrl)
             contentType(ContentType.Application.Json)
             body = postRequest
@@ -101,4 +99,5 @@ inline fun<reified T> handlePostState(httpClient : HttpClient, postUrl : String,
     } catch (e : UnknownHostException) {
         emit(DataState.Error(error = e.message.toString()))
     }
+
 }

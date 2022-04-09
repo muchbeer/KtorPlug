@@ -12,7 +12,6 @@ interface PostRepository {
      fun getPosts() : Flow<DataState<List<PostResponseDto>>>
      fun createPost(postRequest : PostRequestDto) : Flow<DataState<PostResponseDto?>>
       fun uploadImage(filePath : File) : Flow<DataState<ImageResponseDto>>
-      suspend fun saveFullName(muchbeerFamily: String)
-      fun retrieveName() : Flow<String>
+
 
 }

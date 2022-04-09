@@ -52,7 +52,7 @@ class ImageFragment : Fragment() {
             btnTakePhoto.setOnClickListener {  takeImage()  }
 
             btnUpload.setOnClickListener {
-               collectFlowActivity(viewModel.retrieveFullName())  { fullname->
+               collectFlowActivity(viewModel.retrieveFullName)  { fullname->
                    logs(TAG, "tHE saved value is $fullname")
                }
                // uploadImageToServer()

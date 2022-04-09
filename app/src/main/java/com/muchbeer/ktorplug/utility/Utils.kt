@@ -18,8 +18,6 @@ object PostConstant {
 
     //preferenceKey
     val FULL_NAME = stringPreferencesKey("full_name")
-    val PHONE_NUMBER = stringPreferencesKey("phone_number")
-    val SAMPLE_KEY = stringPreferencesKey("randomKey")
     const val GRIEVANCE_PREFERENCE_NAME ="gadiel_pref"
 }
 

@@ -6,6 +6,7 @@ import com.muchbeer.ktorplug.data.remote.DataState
 import com.muchbeer.ktorplug.data.remote.sampledto.ImageResponseDto
 import com.muchbeer.ktorplug.data.remote.sampledto.PostRequestDto
 import com.muchbeer.ktorplug.data.remote.sampledto.PostResponseDto
+import com.muchbeer.ktorplug.repository.DataStorePref
 import com.muchbeer.ktorplug.repository.PostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
-    private val repository : PostRepository
+    private val repository : PostRepository,
+    private val dataStorePref : DataStorePref
 ) : ViewModel(){
 
    // private val _uiState = MutableStateFlow(LatestNewsUiState.Success(emptyList()))
@@ -49,10 +51,9 @@ class PostViewModel @Inject constructor(
     }
 
     fun saveFullname(user : String) = viewModelScope.launch {
-        repository.saveFullName(user)
+        dataStorePref.saveFullName(user)
     }
 
-    fun retrieveFullName() : Flow<String>   {
-       return repository.retrieveName()
-    }
+    val retrieveFullName : Flow<String>   = dataStorePref.retrieveName()
+
 }

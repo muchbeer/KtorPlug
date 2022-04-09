@@ -1,22 +1,30 @@
 package com.muchbeer.ktorplug.di.remote
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.preferencesDataStoreFile
+import com.muchbeer.ktorplug.repository.DataStorePref
+import com.muchbeer.ktorplug.repository.DataStoreprefImpl
 import com.muchbeer.ktorplug.repository.PostRepository
 import com.muchbeer.ktorplug.repository.PostRepositoryImpl
-import com.muchbeer.ktorplug.utility.DataStorePref
+import com.muchbeer.ktorplug.utility.PostConstant
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
-import io.ktor.client.engine.android.*
 import io.ktor.client.features.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
-import io.ktor.http.cio.*
-import javax.inject.Named
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
 @Module
@@ -58,15 +66,31 @@ object ApiModule {
         }
     }
 
+
+
     @Singleton
     @Provides
-    fun providesPrefStore(@ApplicationContext context: Context) : DataStorePref {
-        return DataStorePref(context)
+    fun providePreferencesDataStore(@ApplicationContext appContext: Context) :
+            DataStore<Preferences> {
+        return PreferenceDataStoreFactory.create(
+            corruptionHandler = ReplaceFileCorruptionHandler(
+                produceNewData = { emptyPreferences() }
+            ),
+            scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
+            produceFile = { appContext.preferencesDataStoreFile(PostConstant.GRIEVANCE_PREFERENCE_NAME)}
+        )
     }
+
     @Singleton
     @Provides
-    fun providePostRepository(httpClient: HttpClient, dataPref : DataStorePref) : PostRepository {
-        return PostRepositoryImpl(httpclient = httpClient, dataPref)
+    fun providesPrefStore(dataStore: DataStore<Preferences>) : DataStorePref {
+        return DataStoreprefImpl(dataStore)
+    }
+
+    @Singleton
+    @Provides
+    fun providePostRepository(httpClient: HttpClient, dataPref : DataStoreprefImpl) : PostRepository {
+        return PostRepositoryImpl(httpclient = httpClient)
     }
 
     private val json = kotlinx.serialization.json.Json {
