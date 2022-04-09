@@ -13,7 +13,8 @@ import androidx.fragment.app.viewModels
 import com.muchbeer.ktorplug.*
 import com.muchbeer.ktorplug.data.remote.DataState
 import com.muchbeer.ktorplug.databinding.FragmentImageBinding
-import com.muchbeer.ktorplug.utility.collectflow.collectActivityFlow
+import com.muchbeer.ktorplug.utility.collectflow.collectStateFlow
+import com.muchbeer.ktorplug.utility.collectflow.collectFlowActivity
 import com.muchbeer.ktorplug.utility.exhaustive
 import com.muchbeer.ktorplug.utility.logPrettyJson
 import com.muchbeer.ktorplug.utility.logs
@@ -50,7 +51,12 @@ class ImageFragment : Fragment() {
         binding.apply {
             btnTakePhoto.setOnClickListener {  takeImage()  }
 
-            btnUpload.setOnClickListener { uploadImageToServer() }
+            btnUpload.setOnClickListener {
+               collectFlowActivity(viewModel.retrieveFullName())  { fullname->
+                   logs(TAG, "tHE saved value is $fullname")
+               }
+               // uploadImageToServer()
+            }
         }
         return binding.root
     }
@@ -80,7 +86,7 @@ class ImageFragment : Fragment() {
             return
         }
 
-        collectActivityFlow(viewModel.uploadImage(selectedImageFile!!)) { imageDataState->
+        collectStateFlow(viewModel.uploadImage(selectedImageFile!!)) { imageDataState->
                 when(imageDataState) {
                     is DataState.Error -> logs(TAG,  imageDataState.error)
                     is DataState.ErrorException -> logs(TAG,  imageDataState.exception.message.toString())

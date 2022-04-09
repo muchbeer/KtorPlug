@@ -8,9 +8,11 @@ import com.muchbeer.ktorplug.data.remote.sampledto.PostRequestDto
 import com.muchbeer.ktorplug.data.remote.sampledto.PostResponseDto
 import com.muchbeer.ktorplug.repository.PostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
@@ -28,22 +30,29 @@ class PostViewModel @Inject constructor(
         )
 
     fun sendStatus(request: PostRequestDto) : StateFlow<DataState<PostResponseDto?>> {
-       val serverResponse : StateFlow<DataState<PostResponseDto?>> =  repository.createPost(request)
+        return repository.createPost(request)
            .stateIn(
                initialValue = DataState.Loading,
                scope = viewModelScope,
                started = WhileSubscribed(5000)
            )
-        return serverResponse
+
     }
 
-    fun uploadImage(fileName : File) : StateFlow<DataState<ImageResponseDto>> {
-        val imageResponse : StateFlow<DataState<ImageResponseDto>> =  repository.uploadImage(fileName)
+    fun uploadImage(fileName: File): StateFlow<DataState<ImageResponseDto>> {
+        return repository.uploadImage(fileName)
             .stateIn(
                 initialValue = DataState.Loading,
                 scope = viewModelScope,
                 started = WhileSubscribed(5000)
             )
-        return imageResponse
+    }
+
+    fun saveFullname(user : String) = viewModelScope.launch {
+        repository.saveFullName(user)
+    }
+
+    fun retrieveFullName() : Flow<String>   {
+       return repository.retrieveName()
     }
 }

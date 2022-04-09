@@ -1,10 +1,13 @@
 package com.muchbeer.ktorplug.di.remote
 
+import android.content.Context
 import com.muchbeer.ktorplug.repository.PostRepository
 import com.muchbeer.ktorplug.repository.PostRepositoryImpl
+import com.muchbeer.ktorplug.utility.DataStorePref
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
@@ -57,8 +60,13 @@ object ApiModule {
 
     @Singleton
     @Provides
-    fun providePostRepository(httpClient: HttpClient) : PostRepository {
-        return PostRepositoryImpl(httpclient = httpClient)
+    fun providesPrefStore(@ApplicationContext context: Context) : DataStorePref {
+        return DataStorePref(context)
+    }
+    @Singleton
+    @Provides
+    fun providePostRepository(httpClient: HttpClient, dataPref : DataStorePref) : PostRepository {
+        return PostRepositoryImpl(httpclient = httpClient, dataPref)
     }
 
     private val json = kotlinx.serialization.json.Json {

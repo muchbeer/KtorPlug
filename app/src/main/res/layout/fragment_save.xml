@@ -25,6 +25,15 @@
         android:hint="Please enter Body"
         />
 
+    <EditText
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edtDataStore"
+        android:hint="Please enter DataStore value"
+        />
     <Button
         android:layout_marginTop="24dp"
         android:layout_marginStart="8dp"
@@ -33,5 +42,15 @@
         android:layout_height="wrap_content"
         android:id="@+id/btnSend"
         android:text="Send Data"
+        />
+
+    <Button
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnSaveDataStore"
+        android:text="Save DataStore"
         />
 </LinearLayout>

@@ -9,22 +9,20 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-fun <T> Fragment.collectLatestLifecylceFlow (stateFlow: Flow<T>, collect: suspend (T)->Unit) {
+fun <T> Fragment.collectFlowActivity (flowActivity: Flow<T>, collect: suspend (T)->Unit) {
     viewLifecycleOwner.lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            // stateFlow.collectLatest(collect)
-            stateFlow.collect {
+            flowActivity.collect {
                 collect(it)
             }
         }
     }
 }
 
-fun <T> Fragment.collectActivityFlow (stateFlow: StateFlow<T>, collect: suspend (T)->Unit) {
+fun <T> Fragment.collectStateFlow (stateFlow: StateFlow<T>, collect: suspend (T)->Unit) {
     viewLifecycleOwner.lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-            // stateFlow.collectLatest(collect)
-            stateFlow.collectLatest {
+               stateFlow.collectLatest {
                 collect(it)
             }
         }

@@ -7,10 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import com.muchbeer.ktorplug.*
 import com.muchbeer.ktorplug.data.remote.DataState
 import com.muchbeer.ktorplug.databinding.FragmentViewBinding
-import com.muchbeer.ktorplug.utility.collectflow.collectActivityFlow
+import com.muchbeer.ktorplug.utility.collectflow.collectStateFlow
 import com.muchbeer.ktorplug.utility.exhaustive
 import com.muchbeer.ktorplug.utility.logPrettyJson
 import com.muchbeer.ktorplug.utility.logs
@@ -40,7 +39,7 @@ class ViewFragment : Fragment() {
     @Suppress("IMPLICIT_CAST_TO_ANY")
     private fun easyViewPostData() {
 
-            collectActivityFlow(viewModel.retrievePost) { dataState ->
+            collectStateFlow(viewModel.retrievePost) { dataState ->
                 Log.d("ViewFragment", "Enter the collect")
                 when (dataState) {
                     is DataState.Error -> logs(TAG,  dataState.error)

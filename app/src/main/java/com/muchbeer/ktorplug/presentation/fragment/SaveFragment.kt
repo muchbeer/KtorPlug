@@ -9,7 +9,7 @@ import androidx.fragment.app.viewModels
 import com.muchbeer.ktorplug.data.remote.DataState
 import com.muchbeer.ktorplug.data.remote.sampledto.PostRequestDto
 import com.muchbeer.ktorplug.databinding.FragmentSaveBinding
-import com.muchbeer.ktorplug.utility.collectflow.collectActivityFlow
+import com.muchbeer.ktorplug.utility.collectflow.collectStateFlow
 import com.muchbeer.ktorplug.utility.exhaustive
 import com.muchbeer.ktorplug.utility.logPrettyJson
 import com.muchbeer.ktorplug.utility.logs
@@ -42,6 +42,9 @@ class SaveFragment : Fragment() {
             )
         }
 
+        binding.btnSaveDataStore.setOnClickListener {
+            viewModel.saveFullname(binding.edtDataStore.text.toString())
+        }
         return binding.root
     }
 
@@ -49,8 +52,7 @@ class SaveFragment : Fragment() {
     @Suppress("IMPLICIT_CAST_TO_ANY")
     private fun sendPostData(request: PostRequestDto) {
 
-        collectActivityFlow( viewModel.sendStatus(request)) {  dataState ->
-
+        collectStateFlow( viewModel.sendStatus(request)) { dataState ->
             when(dataState){
                 is DataState.Error -> logs(TAG,  dataState.error)
                 is DataState.ErrorException -> logs(TAG,  dataState.exception.message.toString())

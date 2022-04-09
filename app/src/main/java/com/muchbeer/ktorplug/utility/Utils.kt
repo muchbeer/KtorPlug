@@ -3,6 +3,7 @@ package com.muchbeer.ktorplug.utility
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.gson.GsonBuilder
 import com.muchbeer.ktorplug.BuildConfig
 
@@ -14,7 +15,12 @@ object PostConstant {
     private const val _LINK_URL = BuildConfig.LINK_URL
     const val LINK_URL_IMAGE = _LINK_URL + "home/Api.php?apicall=upload"
 
-    private const val TIME_OUT = 60_000
+
+    //preferenceKey
+    val FULL_NAME = stringPreferencesKey("full_name")
+    val PHONE_NUMBER = stringPreferencesKey("phone_number")
+    val SAMPLE_KEY = stringPreferencesKey("randomKey")
+    const val GRIEVANCE_PREFERENCE_NAME ="gadiel_pref"
 }
 
 

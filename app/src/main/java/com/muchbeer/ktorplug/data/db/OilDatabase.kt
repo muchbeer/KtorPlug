@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [AgrievanceEntity::class],
+@Database(entities = [AgrievanceEntity::class, CgrievanceEntity::class],
     autoMigrations = [], version = 1, exportSchema = false)
 abstract class OilDatabase() : RoomDatabase() {
 
