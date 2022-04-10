@@ -10,7 +10,9 @@ import java.io.File
 interface PostRepository {
 
      fun getPosts() : Flow<DataState<List<PostResponseDto>>>
+      fun getPostFromGeneric() : Flow<DataState<List<PostResponseDto>>>
      fun createPost(postRequest : PostRequestDto) : Flow<DataState<PostResponseDto?>>
+      fun createPostFromGeneric(postRequest : PostRequestDto) : Flow<DataState<PostResponseDto?>>
       fun uploadImage(filePath : File) : Flow<DataState<ImageResponseDto>>
 
 }

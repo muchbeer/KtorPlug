@@ -1,13 +1,10 @@
 package com.muchbeer.ktorplug.repository
 
-import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.muchbeer.ktorplug.utility.PostConstant.FULL_NAME
-import com.muchbeer.ktorplug.utility.PostConstant.GRIEVANCE_PREFERENCE_NAME
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -20,14 +17,25 @@ class DataStoreprefImpl @Inject constructor(private val dataStore: DataStore<Pre
 
     : DataStorePref{
 
-    suspend fun <T> saveValue(valueName : T, key: Preferences.Key<T>) {
+  private  suspend fun <T> saveValue(valueName : T, key: Preferences.Key<T>) {
         dataStore.edit { preferences ->
             preferences[key] = valueName
         }
     }
 
+    private suspend fun deleteAllValues() {
+        dataStore.edit { preferences ->
+            preferences.clear()
+        }
+    }
+
+    private suspend fun <T> deleteSpecificKey(key: Preferences.Key<T>) {
+        dataStore.edit { preferences ->
+            preferences.remove(key)
+        }
+    }
     //Don't convert to Stateflow
-    fun <T> retrievValueFlow(
+ private   fun <T> retrievValueFlow(
         key: Preferences.Key<T>,
         defaultValue: T
     ): Flow<T> {
@@ -48,12 +56,6 @@ class DataStoreprefImpl @Inject constructor(private val dataStore: DataStore<Pre
 
     override fun retrieveName(): Flow<String>  = retrievValueFlow(FULL_NAME, "muchbeer")
 
-    override suspend fun deleteAllData() {
-        dataStore.edit { preference ->
-            preference.clear()
-            //in case you want to remove specific key please use
-          //  preference.remove(FULL_NAME)
-        }
-    }
+    override suspend fun deleteAllData() {  deleteAllValues()  }
 
 }

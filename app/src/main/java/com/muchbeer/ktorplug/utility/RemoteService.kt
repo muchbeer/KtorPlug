@@ -73,21 +73,44 @@ inline fun<reified T> handleGetState(httpClient : HttpClient, getUrl : String) :
 }
 
 
-inline fun<reified T> handlePostState(httpClient : HttpClient, postUrl : String,
-                                      postRequest: PostRequestDto
-) :
-        Flow<DataState<T>> =  flow {
+    inline fun<reified T> handlePostState(httpClient : HttpClient, postUrl : String,
+                                          postRequest: PostRequestDto
+    ) :
+            Flow<DataState<T>> =  flow {
 
-    emit(DataState.Loading)
-    try {
+        emit(DataState.Loading)
+        try {
 
-        val postData : T =   httpClient.post {
-            url(postUrl)
-            contentType(ContentType.Application.Json)
-            body = postRequest
+            val postData : T =   httpClient.post {
+                url(postUrl)
+                contentType(ContentType.Application.Json)
+                body = postRequest
+            }
+            emit(DataState.Success(postData))
+        }  catch (e: RedirectResponseException) {
+            //3xx
+            emit(DataState.Error(error = e.response.status.description))
+        } catch ( e : ClientRequestException) {
+            emit(DataState.Error(error = e.response.status.description))
+        } catch (e : ServerResponseException) {
+            emit(DataState.Error(error = e.response.status.description))
+        } catch (e : Exception) {
+            emit(DataState.Error(error = e.message.toString()))
+        } catch (e : UnknownHostException) {
+            emit(DataState.Error(error = e.message.toString()))
         }
-        emit(DataState.Success(postData))
-    }  catch (e: RedirectResponseException) {
+
+    }
+
+inline fun<reified T> handleNetworkState(
+                                         crossinline networkCall : suspend () -> T
+                                            ) :
+        Flow<DataState<T>> =  flow {
+            emit(DataState.Loading)
+
+    try {
+        emit(DataState.Success(networkCall()))
+    } catch (e: RedirectResponseException) {
         //3xx
         emit(DataState.Error(error = e.response.status.description))
     } catch ( e : ClientRequestException) {
@@ -98,6 +121,6 @@ inline fun<reified T> handlePostState(httpClient : HttpClient, postUrl : String,
         emit(DataState.Error(error = e.message.toString()))
     } catch (e : UnknownHostException) {
         emit(DataState.Error(error = e.message.toString()))
+        }
     }
 
-}

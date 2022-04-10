@@ -24,7 +24,7 @@ class PostViewModel @Inject constructor(
 ) : ViewModel(){
 
    // private val _uiState = MutableStateFlow(LatestNewsUiState.Success(emptyList()))
-    val retrievePost : StateFlow<DataState<List<PostResponseDto>>> = repository.getPosts()
+    val retrievePost : StateFlow<DataState<List<PostResponseDto>>> = repository.getPostFromGeneric()
         .stateIn(
             initialValue = DataState.Loading,
             scope = viewModelScope,
@@ -32,7 +32,7 @@ class PostViewModel @Inject constructor(
         )
 
     fun sendStatus(request: PostRequestDto) : StateFlow<DataState<PostResponseDto?>> {
-        return repository.createPost(request)
+        return repository.createPostFromGeneric(request)
            .stateIn(
                initialValue = DataState.Loading,
                scope = viewModelScope,

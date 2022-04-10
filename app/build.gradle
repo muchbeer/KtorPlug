@@ -83,8 +83,6 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
 
-    implementation "androidx.work:work-runtime-ktx:$work_version"
-
 
     def nav_version = '2.4.1'
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
@@ -109,6 +107,12 @@ dependencies {
 
     implementation("io.coil-kt:coil:1.4.0")
     implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    def workmanager_hilt_version = '1.0.0'
+    implementation "androidx.hilt:hilt-work:$workmanager_hilt_version"
+    kapt "androidx.hilt:hilt-compiler:$workmanager_hilt_version"
+    implementation "androidx.work:work-runtime-ktx:$work_version"
+
 
     def firebase_version = "20.1.2"
     implementation "com.google.firebase:firebase-analytics:$firebase_version"
