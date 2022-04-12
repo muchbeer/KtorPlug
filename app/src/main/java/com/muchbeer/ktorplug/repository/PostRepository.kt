@@ -14,5 +14,6 @@ interface PostRepository {
      fun createPost(postRequest : PostRequestDto) : Flow<DataState<PostResponseDto?>>
       fun createPostFromGeneric(postRequest : PostRequestDto) : Flow<DataState<PostResponseDto?>>
       fun uploadImage(filePath : File) : Flow<DataState<ImageResponseDto>>
+      fun workManagerValues()
 
 }

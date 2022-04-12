@@ -30,14 +30,14 @@ class SaveFragment : Fragment() {
 
         binding = FragmentSaveBinding.inflate(inflater, container, false)
 
-        val randamInt = (1000..2000).random()
+        val randomInt = (1000..2000).random()
 
         binding.btnSend.setOnClickListener {
             sendPostData(
                 PostRequestDto(
                     body = binding.edtBody.text.toString(),
                     title = binding.edtTitle.text.toString(),
-                    userId = randamInt
+                    userId = randomInt
                 )
             )
         }

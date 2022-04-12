@@ -4,4 +4,7 @@
     <string name="title_retrieve">View</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="imageDesc">ImageHere</string>
+    <string name="search_paps">Search Post</string>
+    <string name="paps">User</string>
 </resources>
