@@ -8,6 +8,7 @@ plugins {
     id 'kotlin-kapt'
     id 'com.google.gms.google-services'
     id 'com.google.firebase.crashlytics'
+    id 'kotlin-parcelize'
 
 }
 
@@ -34,6 +35,24 @@ android {
         buildConfigField "String", "BASE_URL_C_ENGAGE_ENTRY", BASE_URL_C_ENGAGE_ENTRY
         buildConfigField "String", "BASE_URL_VEHICLE_ENTRY", BASE_URL_VEHICLE_ENTRY
         buildConfigField "String", "BASE_URL_VEHICLE_REQUEST_ENTRY", BASE_URL_VEHICLE_REQUEST_ENTRY
+
+
+       kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+                arg("room.incremental" , "true")
+                arg("room.expandProjection" , "true")
+            }
+        }
+/*       javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += mapOf(
+                        "room.schemaLocation" to "$projectDir/schemas",
+                        "room.incremental" to "true",
+                        "room.expandProjection" to "true"
+                )
+            }
+        }*/
     }
 
     buildTypes {

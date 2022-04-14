@@ -105,12 +105,7 @@ class ViewFragment : Fragment(R.layout.fragment_posts) {
         }
     }
 
-    private fun searchTitle()    {
-        binding.searchPaps.editText?.doOnTextChanged { onTextChange, _, _, _ ->
-            viewModel.setSearchQuery(onTextChange.toString())
-            logs(TAG, "tHE value search is : ${onTextChange.toString()}")
-        }
-    }
+
     companion object {
         private val TAG = ViewFragment::class.simpleName.toString()
     }

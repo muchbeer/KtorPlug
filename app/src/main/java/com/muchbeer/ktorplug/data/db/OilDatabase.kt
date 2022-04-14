@@ -1,18 +1,23 @@
 package com.muchbeer.ktorplug.data.db
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room.*
+import com.muchbeer.ktorplug.Converters
+import com.muchbeer.ktorplug.data.db.OilDatabase.Companion.LATEST_VERSION
 
-@Database(entities = [AgrievanceEntity::class, CgrievanceEntity::class],
-    autoMigrations = [], version = 1, exportSchema = false)
+@Database(entities = [AgrievanceEntity::class, CgrievanceEntity::class, BpapDetailEntity::class,
+                     CgrievTotalEntity::class, DpapAttachEntity::class],
+    autoMigrations = [AutoMigration (from = 2, to = 3) ],
+    version = LATEST_VERSION,
+    exportSchema = true)
+@TypeConverters(Converters::class)
 abstract class OilDatabase() : RoomDatabase() {
 
     abstract fun grievDao() : GrievanceDao
     abstract fun papDao() : PapDao
 
     companion object {
+        const val LATEST_VERSION = 3
         @Volatile
         private var INSTANCE : OilDatabase? = null
 
@@ -26,6 +31,7 @@ abstract class OilDatabase() : RoomDatabase() {
                         context.applicationContext,
                         OilDatabase::class.java,
                         "oil_db")
+                        .fallbackToDestructiveMigration()
                         .build()
                 }
                 return instance
