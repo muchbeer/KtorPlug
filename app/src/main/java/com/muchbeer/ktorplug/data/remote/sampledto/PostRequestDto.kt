@@ -10,3 +10,15 @@ data class PostRequestDto(
     val title : String,
     val userId : Int
 )
+
+@Serializable
+data class PostResponseDto(
+    @SerialName("body")
+    val body : String,
+    @SerialName("title")
+    val title : String,
+    @SerialName("id")
+    val id : Int,
+    @SerialName("userId")
+    val userId : Int
+)

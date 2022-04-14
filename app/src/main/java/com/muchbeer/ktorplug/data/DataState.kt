@@ -1,4 +1,4 @@
-package com.muchbeer.ktorplug.data.remote
+package com.muchbeer.ktorplug.data
 
 sealed class DataState<out R> {
 

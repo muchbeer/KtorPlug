@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import com.muchbeer.ktorplug.data.remote.DataState
+import com.muchbeer.ktorplug.data.DataState
 import com.muchbeer.ktorplug.data.remote.sampledto.PostRequestDto
 import com.muchbeer.ktorplug.databinding.FragmentSaveBinding
 import com.muchbeer.ktorplug.utility.collectflow.collectStateFlow

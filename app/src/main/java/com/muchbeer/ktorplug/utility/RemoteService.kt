@@ -1,6 +1,6 @@
 package com.muchbeer.ktorplug.utility
 
-import com.muchbeer.ktorplug.data.remote.DataState
+import com.muchbeer.ktorplug.data.DataState
 import com.muchbeer.ktorplug.data.remote.sampledto.PostRequestDto
 import io.ktor.client.*
 import io.ktor.client.features.*

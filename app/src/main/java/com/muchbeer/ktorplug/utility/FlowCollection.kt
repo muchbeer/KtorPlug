@@ -22,7 +22,7 @@ fun <T> Fragment.collectFlowActivity (flowActivity: Flow<T>, collect: suspend (T
 fun <T> Fragment.collectStateFlow (stateFlow: StateFlow<T>, collect: suspend (T)->Unit) {
     viewLifecycleOwner.lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
-               stateFlow.collect {
+               stateFlow.collectLatest {
                 collect(it)
             }
         }

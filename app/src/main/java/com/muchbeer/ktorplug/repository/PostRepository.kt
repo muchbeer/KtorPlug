@@ -1,6 +1,7 @@
 package com.muchbeer.ktorplug.repository
 
-import com.muchbeer.ktorplug.data.remote.DataState
+import com.muchbeer.ktorplug.data.DataState
+import com.muchbeer.ktorplug.data.db.CgrievanceEntity
 import com.muchbeer.ktorplug.data.remote.sampledto.ImageResponseDto
 import com.muchbeer.ktorplug.data.remote.sampledto.PostRequestDto
 import com.muchbeer.ktorplug.data.remote.sampledto.PostResponseDto
@@ -9,11 +10,11 @@ import java.io.File
 
 interface PostRepository {
 
-     fun getPosts() : Flow<DataState<List<PostResponseDto>>>
       fun getPostFromGeneric() : Flow<DataState<List<PostResponseDto>>>
      fun createPost(postRequest : PostRequestDto) : Flow<DataState<PostResponseDto?>>
       fun createPostFromGeneric(postRequest : PostRequestDto) : Flow<DataState<PostResponseDto?>>
       fun uploadImage(filePath : File) : Flow<DataState<ImageResponseDto>>
       fun workManagerValues()
-
+      suspend fun insertToDb(posts : List<CgrievanceEntity>)
+      fun retrieveFromDb(search : String) : Flow<DataState<List<CgrievanceEntity>>>
 }

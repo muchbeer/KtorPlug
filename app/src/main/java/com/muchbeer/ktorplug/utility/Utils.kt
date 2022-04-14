@@ -3,6 +3,7 @@ package com.muchbeer.ktorplug.utility
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.gson.GsonBuilder
 import com.muchbeer.ktorplug.BuildConfig
@@ -37,4 +38,17 @@ fun logs(className: String, msg: String) {  Log.d(className, msg) }
 
 fun Context.toastMsg(msg: String) {
     Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+}
+
+inline fun SearchView.onQueryTextChanged(crossinline listener: (String) -> Unit) {
+    this.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        override fun onQueryTextSubmit(query: String?): Boolean {
+            return true
+        }
+
+        override fun onQueryTextChange(newText: String?): Boolean {
+            listener(newText.orEmpty())
+            return true
+        }
+    })
 }

@@ -5,10 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.muchbeer.ktorplug.data.remote.sampledto.PostResponseDto
+import com.muchbeer.ktorplug.data.db.CgrievanceEntity
 import com.muchbeer.ktorplug.databinding.ListItemBinding
 
-class PostAdapter : ListAdapter<PostResponseDto, PostAdapter.PostVH>(DifUtilCalBack) {
+class PostAdapter : ListAdapter<CgrievanceEntity, PostAdapter.PostVH>(DifUtilCalBack) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostVH {
         val inflater = LayoutInflater.from(parent.context)
@@ -22,19 +22,19 @@ class PostAdapter : ListAdapter<PostResponseDto, PostAdapter.PostVH>(DifUtilCalB
     }
 
     class PostVH (private val binding: ListItemBinding) : RecyclerView.ViewHolder(binding.root){
-            fun bind(data : PostResponseDto) {
+            fun bind(data : CgrievanceEntity) {
                 binding.itemTitle.text = data.title
                 binding.itemDescription.text = data.body
             }
     }
 
-    companion object DifUtilCalBack : DiffUtil.ItemCallback<PostResponseDto>() {
-        override fun areItemsTheSame(oldItem: PostResponseDto, newItem: PostResponseDto): Boolean {
+    companion object DifUtilCalBack : DiffUtil.ItemCallback<CgrievanceEntity>() {
+        override fun areItemsTheSame(oldItem: CgrievanceEntity, newItem: CgrievanceEntity): Boolean {
             return oldItem.id == newItem.id      }
 
         override fun areContentsTheSame(
-            oldItem: PostResponseDto,
-            newItem: PostResponseDto
+            oldItem: CgrievanceEntity,
+            newItem: CgrievanceEntity
         ) : Boolean{ return oldItem == newItem     }
     }
 

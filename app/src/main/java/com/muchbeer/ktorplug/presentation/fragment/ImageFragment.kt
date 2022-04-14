@@ -11,7 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
 import androidx.fragment.app.viewModels
 import com.muchbeer.ktorplug.*
-import com.muchbeer.ktorplug.data.remote.DataState
+import com.muchbeer.ktorplug.data.DataState
 import com.muchbeer.ktorplug.databinding.FragmentImageBinding
 import com.muchbeer.ktorplug.utility.collectflow.collectStateFlow
 import com.muchbeer.ktorplug.utility.collectflow.collectFlowActivity

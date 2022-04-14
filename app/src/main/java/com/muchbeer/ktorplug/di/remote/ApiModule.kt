@@ -7,6 +7,9 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.muchbeer.ktorplug.data.db.datasource.LocalPostDatasource
+import com.muchbeer.ktorplug.data.remote.datasource.RemoteDataSource
+import com.muchbeer.ktorplug.data.remote.datasource.RemoteDataSourceImpl
 import com.muchbeer.ktorplug.repository.DataStorePref
 import com.muchbeer.ktorplug.repository.DataStoreprefImpl
 import com.muchbeer.ktorplug.repository.PostRepository
@@ -35,11 +38,9 @@ object ApiModule {
     @Provides
     fun provideKtorHttpClient(): HttpClient {
         return HttpClient() {
-            // Logging
             install(Logging) {
                 level = LogLevel.BODY
             }
-            // JSON
             install(JsonFeature) {
                // serializer = KotlinxSerializer()
                // serializer = KotlinxSerializer(json)
@@ -86,8 +87,17 @@ object ApiModule {
 
     @Singleton
     @Provides
-    fun providePostRepository(httpClient: HttpClient) : PostRepository {
-        return PostRepositoryImpl(httpclient = httpClient)
+    fun providesRemoteDataSource(httpClient: HttpClient) : RemoteDataSource {
+        return RemoteDataSourceImpl(httpClient)
+    }
+
+
+
+    @Singleton
+    @Provides
+    fun providePostRepository(remoteDS: RemoteDataSource,
+                                localDS : LocalPostDatasource) : PostRepository {
+        return PostRepositoryImpl(remoteDS, localDS)
     }
 
     private val json = kotlinx.serialization.json.Json {

@@ -1,24 +1,16 @@
 package com.muchbeer.ktorplug.di.db
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.preferencesDataStoreFile
 import com.muchbeer.ktorplug.data.db.GrievanceDao
 import com.muchbeer.ktorplug.data.db.OilDatabase
 import com.muchbeer.ktorplug.data.db.PapDao
-import com.muchbeer.ktorplug.utility.PostConstant.GRIEVANCE_PREFERENCE_NAME
+import com.muchbeer.ktorplug.data.db.datasource.LocalPostDatasource
+import com.muchbeer.ktorplug.data.db.datasource.LocalPostDatasourceImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
 @Module
@@ -44,5 +36,9 @@ object DatabaseModule {
         return dataDB.papDao()
     }
 
-
+ @Singleton
+ @Provides
+ fun providePostDataSource(cGriev : GrievanceDao) : LocalPostDatasource {
+     return LocalPostDatasourceImpl(cGriev)
+ }
 }
