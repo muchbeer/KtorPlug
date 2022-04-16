@@ -7,6 +7,7 @@ import com.muchbeer.ktorplug.data.db.*
 import com.muchbeer.ktorplug.repository.PostRepository
 import com.muchbeer.ktorplug.utility.logs
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -63,13 +64,6 @@ class GrievaneViewModel @Inject constructor(
         )
     }
 
-    fun getAllDAttachByStatus(imagestatus: IMAGESTATUS) : StateFlow<List<DpapAttachEntity>> {
-        return repository.retrieveAllDAttachByStatus(imagestatus).stateIn(
-            initialValue = emptyList(),
-            scope = viewModelScope,
-            started = WhileSubscribed(5000)
-        )     }
-
     fun insertAgrievEntry(agriev : AgrievanceEntity) = viewModelScope.launch {
         val aGrieValue = repository.insertAgrievEntry(agriev)
         if (aGrieValue >= 0) {
@@ -98,8 +92,10 @@ class GrievaneViewModel @Inject constructor(
 
 
     fun updatCgrievance(cgriev: CgrievTotalEntity) = viewModelScope.launch {
-        repository.updateCgrievance(cgriev)
-    }
+        repository.updateCgrievance(cgriev)  }
+
+    fun uploadFileToserver () = viewModelScope.launch{
+        repository.workManagerUploads()    }
 
     companion object {
         private val TAG = GrievaneViewModel::class.simpleName.toString()

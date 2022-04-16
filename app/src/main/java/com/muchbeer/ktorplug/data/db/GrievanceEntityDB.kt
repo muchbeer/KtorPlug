@@ -1,5 +1,6 @@
 package com.muchbeer.ktorplug.data.db
 
+import android.graphics.Bitmap
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -1,5 +1,7 @@
 package com.muchbeer.ktorplug.repository
 
+import android.content.Context
+import com.muchbeer.ktorplug.data.BackState
 import com.muchbeer.ktorplug.data.db.datasource.LocalPostDatasource
 import com.muchbeer.ktorplug.data.DataState
 import com.muchbeer.ktorplug.data.db.*
@@ -11,27 +13,58 @@ import com.muchbeer.ktorplug.utility.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.io.File
+import java.io.IOException
 
 class PostRepositoryImpl(
     private val remoteDS : RemoteDataSource,
-    private val postDS : LocalPostDatasource
+    private val postDS : LocalPostDatasource,
+    private val context: Context
     ) : PostRepository {
 
-    override fun getPostFromGeneric(): Flow<DataState<List<PostResponseDto>>> {
+    override fun getPostFromGeneric(): Flow<BackState<List<PostResponseDto>>> {
         return remoteDS.getPostFromGeneric()     }
 
-    override fun createPost(postRequest: PostRequestDto): Flow<DataState<PostResponseDto?>> {
+    override fun createPost(postRequest: PostRequestDto): Flow<BackState<PostResponseDto?>> {
         return remoteDS.createPost(postRequest)     }
 
-    override fun createPostFromGeneric(postRequest: PostRequestDto): Flow<DataState<PostResponseDto?>> {
+    override fun createPostFromGeneric(postRequest: PostRequestDto):
+                                    Flow<BackState<PostResponseDto?>> {
         return remoteDS.createPostFromGeneric(postRequest)     }
 
-    override fun uploadImage(filePath: File): Flow<DataState<ImageResponseDto>> {
-     return   remoteDS.uploadImage(filePath)    }
+    override suspend fun workManagerUploads() {
 
-    override fun workManagerValues() {
-     val randomNumber = (10..100).random()
-    logs(TAG, "The random number is : $randomNumber")}
+        postDS.retrieveAllDAttachByStatus(IMAGESTATUS.AVAILABLE).collect { dAttachStatus ->
+            dAttachStatus.forEach { dAttachUpload->
+                val filename  = File(context.cacheDir, dAttachUpload.file_name)
+
+                remoteDS.uploadImage(filename, dAttachUpload.c_fullname).collect { imageResponse->
+                    try {
+                        val isFileCreated = filename.exists()
+                        if (isFileCreated) {
+                            when(imageResponse) {
+                                is BackState.Error -> logs(TAG, "PHP error1 is ${imageResponse.error}")
+                                is BackState.Success -> {
+                                    val responseData : ImageResponseDto = imageResponse.data
+                                    if(!responseData.error) {
+                                        postDS.updateDattachment(dAttachUpload.copy(url_name = responseData.image,
+                                            image_status = IMAGESTATUS.SUCCESSFUL))
+                                        logPrettyJson(responseData)
+                                    } else {
+                                        logs(TAG, "PHP server error")
+                                    }
+                                }
+                            }.exhaustive
+                        } else
+                        {   logs(TAG, "File does not exist")   }
+                    } catch ( ex : IOException) { logs(TAG, "The file error : ${ex.message.toString()}")}
+
+
+                }
+            }
+        }
+
+    }
+
 
     override suspend fun insertToDb(posts: List<CgrievanceEntity>) {
         postDS.insertPost(posts)     }
@@ -67,9 +100,6 @@ class PostRepositoryImpl(
 
     override fun retrieveDAddAttachWithfullName(fullName: String): Flow<List<DpapAttachEntity>> {
         return postDS.retrieveDAddAttachWithfullName(fullName)     }
-
-    override fun retrieveAllDAttachByStatus(uploadStatus: IMAGESTATUS): Flow<List<DpapAttachEntity>> {
-       return postDS.retrieveAllDAttachByStatus(uploadStatus)     }
 
     override suspend fun insertAgrievEntry(agrienceModel: AgrievanceEntity): Long {
        return postDS.insertAgrievEntry(agrienceModel)     }

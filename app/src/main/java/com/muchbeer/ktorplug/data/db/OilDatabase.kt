@@ -7,7 +7,7 @@ import com.muchbeer.ktorplug.data.db.OilDatabase.Companion.LATEST_VERSION
 
 @Database(entities = [AgrievanceEntity::class, CgrievanceEntity::class, BpapDetailEntity::class,
                      CgrievTotalEntity::class, DpapAttachEntity::class],
-    autoMigrations = [AutoMigration (from = 2, to = 3) ],
+   // autoMigrations = [AutoMigration (from = 3, to = 4) ],
     version = LATEST_VERSION,
     exportSchema = true)
 @TypeConverters(Converters::class)
@@ -17,10 +17,9 @@ abstract class OilDatabase() : RoomDatabase() {
     abstract fun papDao() : PapDao
 
     companion object {
-        const val LATEST_VERSION = 3
+        const val LATEST_VERSION = 4
         @Volatile
         private var INSTANCE : OilDatabase? = null
-
 
         fun getDatabaseInstance(context: Context) : OilDatabase
         {
@@ -32,7 +31,7 @@ abstract class OilDatabase() : RoomDatabase() {
                         OilDatabase::class.java,
                         "oil_db")
                         .fallbackToDestructiveMigration()
-                        .build()
+                         .build()
                 }
                 return instance
             }

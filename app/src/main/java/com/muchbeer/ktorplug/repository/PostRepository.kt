@@ -1,5 +1,6 @@
 package com.muchbeer.ktorplug.repository
 
+import com.muchbeer.ktorplug.data.BackState
 import com.muchbeer.ktorplug.data.DataState
 import com.muchbeer.ktorplug.data.db.*
 import com.muchbeer.ktorplug.data.remote.sampledto.ImageResponseDto
@@ -10,12 +11,16 @@ import java.io.File
 
 interface PostRepository {
 
-      fun getPostFromGeneric() : Flow<DataState<List<PostResponseDto>>>
-     fun createPost(postRequest : PostRequestDto) : Flow<DataState<PostResponseDto?>>
-      fun createPostFromGeneric(postRequest : PostRequestDto) : Flow<DataState<PostResponseDto?>>
-      fun uploadImage(filePath : File) : Flow<DataState<ImageResponseDto>>
-      fun workManagerValues()
+      fun getPostFromGeneric() : Flow<BackState<List<PostResponseDto>>>
+
+     fun createPost(postRequest : PostRequestDto) : Flow<BackState<PostResponseDto?>>
+
+      fun createPostFromGeneric(postRequest : PostRequestDto) : Flow<BackState<PostResponseDto?>>
+
+     suspend fun workManagerUploads()
+
       suspend fun insertToDb(posts : List<CgrievanceEntity>)
+
       fun retrieveFromDb(search : String) : Flow<DataState<List<CgrievanceEntity>>>
 
     fun retrieveAllAgrievanceEntry() : Flow<List<AgrievanceEntity>>
@@ -31,8 +36,6 @@ interface PostRepository {
     fun retrieveAllCGrievanceWithUsername(username : String) : Flow<List<CgrievTotalEntity>>
 
     fun retrieveDAddAttachWithfullName(fullName: String) : Flow<List<DpapAttachEntity>>
-
-    fun retrieveAllDAttachByStatus(uploadStatus : IMAGESTATUS) : Flow<List<DpapAttachEntity>>
 
   //  fun retrieveAllDAttachmentUploads() : Flow<List<DpapAttachEntity>>
 

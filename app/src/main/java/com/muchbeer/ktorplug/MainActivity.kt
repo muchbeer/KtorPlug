@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         binding.navView.setupWithNavController(navController)
 
-        sendToServer()
+       // sendToServer()
     }
 
     override fun onNavigateUp() : Boolean {

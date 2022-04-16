@@ -1,5 +1,6 @@
 package com.muchbeer.ktorplug.data.remote.datasource
 
+import com.muchbeer.ktorplug.data.BackState
 import com.muchbeer.ktorplug.data.DataState
 import com.muchbeer.ktorplug.data.db.CgrievanceEntity
 import com.muchbeer.ktorplug.data.remote.sampledto.ImageResponseDto
@@ -19,7 +20,7 @@ import java.io.File
 class RemoteDataSourceImpl(
     private val httpclient : HttpClient,
 ): RemoteDataSource{
-    override fun getPostFromGeneric(): Flow<DataState<List<PostResponseDto>>> {
+    override fun getPostFromGeneric(): Flow<BackState<List<PostResponseDto>>> {
         return handleNetworkState {
             httpclient.get {
                 url(BASE_URL_POSTS)
@@ -27,11 +28,11 @@ class RemoteDataSourceImpl(
         }
     }
 
-    override fun createPost(postRequest: PostRequestDto): Flow<DataState<PostResponseDto?>> {
+    override fun createPost(postRequest: PostRequestDto): Flow<BackState<PostResponseDto?>> {
         return handlePostState(httpclient, BASE_URL_POSTS, postRequest)
     }
 
-    override fun createPostFromGeneric(postRequest: PostRequestDto): Flow<DataState<PostResponseDto?>> {
+    override fun createPostFromGeneric(postRequest: PostRequestDto): Flow<BackState<PostResponseDto?>> {
         return handleNetworkState {
             httpclient.post {
                 url(BASE_URL_POSTS)
@@ -41,10 +42,11 @@ class RemoteDataSourceImpl(
         }
     }
 
-    override fun uploadImage(filePath: File): Flow<DataState<ImageResponseDto>> {
+    override fun uploadImage(filePath: File, descName : String): Flow<BackState<ImageResponseDto>> {
         return handleImageUpload(
             httpClient = httpclient,
-            file = filePath
+            file = filePath,
+            desc = descName
         )
     }
 

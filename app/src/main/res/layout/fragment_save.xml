@@ -81,7 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnViewBOnly"
-                android:text="View B"
+                android:text="View D attach"
                 />
         </LinearLayout>
 
@@ -150,15 +150,15 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/btnDAttach"
-                android:text="Dattachment"
+                android:id="@+id/btnOpenCamera"
+                android:text="Take Photo"
                 />
             <Button
                 android:layout_marginStart="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnViewDAttach"
-                android:text="View D"
+                android:text="Upload Photo"
                 />
         </LinearLayout>
 

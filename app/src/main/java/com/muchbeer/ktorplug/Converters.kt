@@ -1,5 +1,7 @@
 package com.muchbeer.ktorplug
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -7,6 +9,8 @@ import com.muchbeer.ktorplug.data.db.BpapDetailEntity
 import com.muchbeer.ktorplug.data.db.CgrievTotalEntity
 import com.muchbeer.ktorplug.data.db.DpapAttachEntity
 import com.muchbeer.ktorplug.data.db.IMAGESTATUS
+import java.io.ByteArrayOutputStream
+import java.io.File
 
 class Converters {
     private inline fun <reified T> Gson.fromJson(json: String) = fromJson<T>(
@@ -66,6 +70,19 @@ class Converters {
 
         return Gson().fromJson(jsonAttachment)
     }
+
+    @TypeConverter
+    fun fromBitmap(bitmap : Bitmap) : ByteArray {
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        return outputStream.toByteArray()
+    }
+
+    @TypeConverter
+    fun toBitmap(byteArray : ByteArray) : Bitmap {
+        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    }
+
 
     @TypeConverter
     fun fromImageStatus(imageStatus: IMAGESTATUS): String {

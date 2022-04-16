@@ -96,8 +96,9 @@ object ApiModule {
     @Singleton
     @Provides
     fun providePostRepository(remoteDS: RemoteDataSource,
-                                localDS : LocalPostDatasource) : PostRepository {
-        return PostRepositoryImpl(remoteDS, localDS)
+                                localDS : LocalPostDatasource,
+                                @ApplicationContext context: Context) : PostRepository {
+        return PostRepositoryImpl(remoteDS, localDS, context)
     }
 
     private val json = kotlinx.serialization.json.Json {

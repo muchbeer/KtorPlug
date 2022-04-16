@@ -1,14 +1,17 @@
 package com.muchbeer.ktorplug.utility
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.FileProvider
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.google.gson.GsonBuilder
 import com.muchbeer.ktorplug.BuildConfig
-import kotlin.time.ExperimentalTime
-import kotlin.time.measureTimedValue
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.File
 
 object PostConstant {
 
@@ -38,6 +41,15 @@ fun logs(className: String, msg: String) {  Log.d(className, msg) }
 
 fun Context.toastMsg(msg: String) {
     Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+}
+
+ fun Context.getFileUri(fileName: String, filePath : (File) -> Unit): Uri {
+    val tmpFile = File.createTempFile(fileName, ".png",  cacheDir).apply {
+        createNewFile()
+        deleteOnExit()
+    }
+    filePath(tmpFile)
+    return FileProvider.getUriForFile(this, "${BuildConfig.APPLICATION_ID}.provider", tmpFile)
 }
 
 inline fun SearchView.onQueryTextChanged(crossinline listener: (String) -> Unit) {

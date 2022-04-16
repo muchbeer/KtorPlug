@@ -1,19 +1,24 @@
 package com.muchbeer.ktorplug.presentation.fragment
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import com.muchbeer.ktorplug.data.db.*
 import com.muchbeer.ktorplug.databinding.FragmentSaveBinding
 import com.muchbeer.ktorplug.utility.collectflow.collectStateFlow
+import com.muchbeer.ktorplug.utility.getFileUri
 import com.muchbeer.ktorplug.utility.logPrettyJson
 import com.muchbeer.ktorplug.utility.logs
+import com.muchbeer.ktorplug.utility.toastMsg
 import com.muchbeer.ktorplug.viewmodel.GrievaneViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
 
 @AndroidEntryPoint
 class SaveFragment : Fragment() {
@@ -27,6 +32,17 @@ class SaveFragment : Fragment() {
     private lateinit var binding : FragmentSaveBinding
     private val viewModel : GrievaneViewModel by viewModels()
 
+    private var selectedImageUri: Uri? = null
+    private var selectedImageFile : File? = null
+
+    private val takePhoto = registerForActivityResult(ActivityResultContracts.TakePicture()) { isSuccess->
+        if (isSuccess) {
+            selectedImageUri?.let { uri ->
+               // binding.imageView.setImageURI(uri)
+               requireContext().toastMsg("The uri captured is : ${uri.path}")
+            }
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,9 +50,6 @@ class SaveFragment : Fragment() {
 
         binding = FragmentSaveBinding.inflate(inflater, container, false)
 
-       /* binding.btnSaveDataStore.setOnClickListener {
-            viewModel.saveFullname(binding.edtDataStore.text.toString())
-        }*/
 
         binding.valutationNumber.setOnClickListener {
             valuationNo = (100..200).random().toString()
@@ -48,7 +61,7 @@ class SaveFragment : Fragment() {
             cgrievList.addAll(it)
         }
 
-        collectStateFlow(viewModel.getAllDAttachByStatus(imagestatus = IMAGESTATUS.SUCCESSFUL)) {
+        collectStateFlow(viewModel.getAllDAttachWithfullName(fullName = "George")) {
             dAttachmentList.clear()
             dAttachmentList.addAll(it)
         }
@@ -63,23 +76,23 @@ class SaveFragment : Fragment() {
         return binding.root
     }
 
-
-
     private fun insertGrievance() {
-        val dAttach = DpapAttachEntity(
-            file_name = "gadielFilename",
-            url_name = "gadielUrl",
-            c_fullname = "Gadiel"
-        )
-
-        binding.btnDAttach.setOnClickListener {
-            viewModel.insertDattach(dattach = dAttach)
-            logs(TAG, "tHE cGriev value is : $dAttach")
+        binding.btnOpenCamera.setOnClickListener {
+            takeImage()
+            if(selectedImageFile!=null) {
+                val dAttchPhoto = DpapAttachEntity(
+                    file_name = selectedImageFile!!.name,
+                    c_fullname = "George",
+                    image_status = IMAGESTATUS.AVAILABLE,
+                )
+                viewModel.insertDattach(dAttchPhoto)
+                logs(TAG, "tHE Dattach value is : $dAttchPhoto")
+            }
         }
 
         val cGriev = CgrievTotalEntity(
             agreetosign = "yes",
-            full_name = "Gadiel",
+            full_name = "George",
             a_username = "muchbeer",
             attachments = dAttachmentList
         )
@@ -90,7 +103,7 @@ class SaveFragment : Fragment() {
         }
 
         val bAttachTop = BpapDetailEntity(
-            "B02",
+            "B01",
             a_username = "muchbeer",
             grievance = cgrievList
         )
@@ -115,7 +128,6 @@ class SaveFragment : Fragment() {
 
     private fun clickButton() {
         binding.btnDisplayAOnly.setOnClickListener {
-
             collectStateFlow(viewModel.allAgrienceEntry) {
                logPrettyJson(it)
               //  viewModel.displayApiModel(it)
@@ -123,7 +135,7 @@ class SaveFragment : Fragment() {
         }
 
         binding.btnViewBOnly.setOnClickListener {
-            collectStateFlow(viewModel.allBpapsEntry) {
+            collectStateFlow(viewModel.allDAttachmentEntry) {
                 logPrettyJson(it)
             }
         }
@@ -134,10 +146,19 @@ class SaveFragment : Fragment() {
         }
 
         binding.btnViewDAttach.setOnClickListener {
-            collectStateFlow(viewModel.allDAttachmentEntry) {
-                logPrettyJson(it)  }
+            viewModel.uploadFileToserver()
         }
     }
+
+    private fun takeImage() {
+        requireContext().getFileUri("muchbeer") {
+            selectedImageFile = it
+            logs(TAG, "tHE filename is origin: $it") }.let { uri ->
+            selectedImageUri = uri
+            takePhoto.launch(uri)
+        }
+    }
+
     companion object {
         private val TAG = SaveFragment::class.simpleName.toString()
     }

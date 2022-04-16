@@ -2,6 +2,7 @@ package com.muchbeer.ktorplug.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.muchbeer.ktorplug.data.BackState
 import com.muchbeer.ktorplug.data.DataState
 import com.muchbeer.ktorplug.data.db.CgrievanceEntity
 import com.muchbeer.ktorplug.data.remote.sampledto.ImageResponseDto
@@ -45,30 +46,15 @@ class PostViewModel @Inject constructor(
             started = WhileSubscribed(5000)
         )
 
-    val retrievePost : StateFlow<DataState<List<PostResponseDto>>> = repository.getPostFromGeneric()
-        .stateIn(
-            initialValue = DataState.Loading,
-            scope = viewModelScope,
-            started = WhileSubscribed(5000)
-        )
 
-    fun sendStatus(request: PostRequestDto) : StateFlow<DataState<PostResponseDto?>> {
+    fun sendStatus(request: PostRequestDto) : StateFlow<BackState<PostResponseDto?>> {
         return repository.createPostFromGeneric(request)
            .stateIn(
-               initialValue = DataState.Loading,
+               initialValue = BackState.Success(null),
                scope = viewModelScope,
                started = WhileSubscribed(5000)
            )
 
-    }
-
-    fun uploadImage(fileName: File): StateFlow<DataState<ImageResponseDto>> {
-        return repository.uploadImage(fileName)
-            .stateIn(
-                initialValue = DataState.Loading,
-                scope = viewModelScope,
-                started = WhileSubscribed(5000)
-            )
     }
 
     fun saveFullname(user : String) = viewModelScope.launch {

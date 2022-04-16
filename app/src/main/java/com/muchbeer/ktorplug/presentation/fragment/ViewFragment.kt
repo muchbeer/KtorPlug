@@ -14,7 +14,6 @@ import com.muchbeer.ktorplug.R
 import com.muchbeer.ktorplug.data.DataState
 import com.muchbeer.ktorplug.databinding.FragmentPostsBinding
 import com.muchbeer.ktorplug.presentation.adapter.PostAdapter
-import com.muchbeer.ktorplug.utility.collectflow.collectFlowActivity
 import com.muchbeer.ktorplug.utility.collectflow.collectStateFlow
 import com.muchbeer.ktorplug.utility.exhaustive
 import com.muchbeer.ktorplug.utility.logs
