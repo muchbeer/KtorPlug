@@ -151,14 +151,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnOpenCamera"
-                android:text="Take Photo"
+                android:text="Save DAtach"
                 />
             <Button
                 android:layout_marginStart="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/btnViewDAttach"
-                android:text="Upload Photo"
+                android:text="Update DAttach"
                 />
         </LinearLayout>
 

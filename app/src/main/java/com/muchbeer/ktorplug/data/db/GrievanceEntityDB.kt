@@ -27,7 +27,7 @@ data class BpapDetailEntity(
     val b_pap_id: String,
     val a_username: String,
     @TypeConverters(Converters::class)
-    val grievance: List<CgrievTotalEntity>,
+    val grievance: List<CgrievTotalEntity>
 ) : Parcelable
 
 @Entity(tableName = "CgrievEntity")

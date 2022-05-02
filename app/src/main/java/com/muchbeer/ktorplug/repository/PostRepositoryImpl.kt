@@ -5,12 +5,14 @@ import com.muchbeer.ktorplug.data.BackState
 import com.muchbeer.ktorplug.data.db.datasource.LocalPostDatasource
 import com.muchbeer.ktorplug.data.DataState
 import com.muchbeer.ktorplug.data.db.*
+import com.muchbeer.ktorplug.data.db.datasource.LocalPostDatasourceAlt
 import com.muchbeer.ktorplug.data.remote.datasource.RemoteDataSource
 import com.muchbeer.ktorplug.data.remote.sampledto.ImageResponseDto
 import com.muchbeer.ktorplug.data.remote.sampledto.PostRequestDto
 import com.muchbeer.ktorplug.data.remote.sampledto.PostResponseDto
 import com.muchbeer.ktorplug.utility.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import java.io.File
 import java.io.IOException
@@ -18,8 +20,14 @@ import java.io.IOException
 class PostRepositoryImpl(
     private val remoteDS : RemoteDataSource,
     private val postDS : LocalPostDatasource,
+    private val localDS : LocalPostDatasourceAlt,
     private val context: Context
     ) : PostRepository {
+
+    private val bpapsTopList = mutableListOf<BpapDetailEntity>()
+    private val cgrievList = mutableListOf<CgrievTotalEntity>()
+    private val dAttachmentList =  mutableListOf<DpapAttachEntity>()
+
 
     override fun getPostFromGeneric(): Flow<BackState<List<PostResponseDto>>> {
         return remoteDS.getPostFromGeneric()     }
@@ -48,6 +56,7 @@ class PostRepositoryImpl(
                                     if(!responseData.error) {
                                         postDS.updateDattachment(dAttachUpload.copy(url_name = responseData.image,
                                             image_status = IMAGESTATUS.SUCCESSFUL))
+
                                         logPrettyJson(responseData)
                                     } else {
                                         logs(TAG, "PHP server error")
@@ -64,7 +73,6 @@ class PostRepositoryImpl(
         }
 
     }
-
 
     override suspend fun insertToDb(posts: List<CgrievanceEntity>) {
         postDS.insertPost(posts)     }
@@ -99,7 +107,7 @@ class PostRepositoryImpl(
        return postDS.retrieveAllCGrievanceWithUsername(username)     }
 
     override fun retrieveDAddAttachWithfullName(fullName: String): Flow<List<DpapAttachEntity>> {
-        return postDS.retrieveDAddAttachWithfullName(fullName)     }
+        return postDS.retrieveAllDAddAttachWithfullName(fullName)     }
 
     override suspend fun insertAgrievEntry(agrienceModel: AgrievanceEntity): Long {
        return postDS.insertAgrievEntry(agrienceModel)     }
@@ -119,6 +127,70 @@ class PostRepositoryImpl(
 
     override suspend fun updateDattachment(dattach: DpapAttachEntity) {
       postDS.updateDattachment(dattach)     }
+
+    override suspend fun insertAgrievEntryAlt(agrienceModel: AgrievanceAltEntity): Long {
+      return localDS.insertAgrievEntryAlt(agrienceModel)
+    }
+
+    override suspend fun insertCgrievDetailAlt(cgriev: CgrievTotalAltEntity): Long {
+        return localDS.insertCgrievDetailAlt(cgriev)
+    }
+
+    override suspend fun insertDattachAlt(dattach: DpapAttachAltEntity): Long {
+       return localDS.insertDattachAlt(dattach)
+    }
+
+    override suspend fun updateCgrievanceAlt(cgriev: CgrievTotalAltEntity) {
+        localDS.updateCgrievanceAlt(cgriev)
+    }
+
+    override suspend fun updateDattachmentAlt(dattach: DpapAttachAltEntity) {
+       localDS.updateDattachmentAlt(dattach)
+    }
+
+    override fun retrieveDattachByStatusAlt(uploadStatus: IMAGESTATUS): Flow<List<DpapAttachAltEntity>> {
+       return localDS.retrieveAllDAttachByStatusAlt(uploadStatus)
+    }
+
+    override fun retrieveCgrievanceAlt(): Flow<List<CgrievTotalAltEntity>> {
+        return localDS.retrieveAllCGrievanceEntryAlt()
+    }
+
+    override fun retrieveAgrieveWithCgrievAndDattach(): Flow<List<AgrievWithCgrieAndDattachList>> {
+        return localDS.retrievAgrievWithCgrievAndDattach()
+    }
+
+    suspend fun sendToServer() {
+       cgrievList.clear()
+       dAttachmentList.clear()
+       bpapsTopList.clear()
+        val cGrievModel = postDS.retrieveAllAgrievanceEntry().collect { aGrievList ->
+                aGrievList.forEach { aGrievEntity->
+                  val allAUsername = aGrievEntity.user_name
+                    postDS.retrieveAllBGrievWithUsername(allAUsername).collect { bpapList ->
+                        bpapsTopList.addAll(bpapList)
+                        bpapList.forEach { bList ->
+                         val allBEntity =  bList.a_username
+                            postDS.retrieveAllCGrievanceWithUsername(allBEntity).collect { cGrivList->
+                                cgrievList.addAll(cGrivList)
+                                cGrivList.forEach { cGrievEntity->
+                                    val allCEntity = cGrievEntity.full_name
+                                    postDS.retrieveAllDAddAttachWithfullName(allCEntity).collect {
+                                        dAttachmentList.addAll(it)
+                                        it.forEach { dEntity ->
+                                           // ServerModel.toDServer(dEntity)
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    val finalList : AgrievanceEntity
+                }
+        }
+    }
+
 
     companion object {
         private val TAG = PostRepositoryImpl::class.simpleName.toString()

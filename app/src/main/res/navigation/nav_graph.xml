@@ -7,14 +7,14 @@
 
     <fragment
         android:id="@+id/saveFragment"
-        android:name="com.muchbeer.ktorplug.presentation.fragment.SaveFragment"
+        android:name="com.muchbeer.ktorplug.presentation.fragment.SaveAltFragment"
         android:label="Save Post"
         tools:layout="@layout/fragment_save" />
     <fragment
         android:id="@+id/viewFragment"
         android:name="com.muchbeer.ktorplug.presentation.fragment.ViewFragment"
         android:label="View Post"
-        tools:layout="@layout/fragment_view" />
+        tools:layout="@layout/fragment_posts" />
 
     <fragment android:id="@+id/imageFragment"
         android:name="com.muchbeer.ktorplug.presentation.fragment.ImageFragment"

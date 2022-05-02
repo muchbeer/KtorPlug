@@ -52,14 +52,64 @@ class LocalPostDatasourceImpl(private val grievDao : GrievanceDao) : LocalPostDa
        return grievDao.getAllBpapsWithEachUsername(username)     }
 
     override fun retrieveAllCGrievanceWithUsername(username: String): Flow<List<CgrievTotalEntity>> {
-        return grievDao.getAllGrieveWithPaps(username)     }
+        return grievDao.getAllCGrieveWithPapsUsername(username)     }
 
-    override fun retrieveDAddAttachWithfullName(fullName: String): Flow<List<DpapAttachEntity>> {
-       return grievDao.getAllDpapsAttachmentInCGrievence(fullName)     }
+    override fun retrieveAllDAddAttachWithfullName(fullName: String): Flow<List<DpapAttachEntity>> {
+       return grievDao.getAllDpapsAttachmentInCGrievenceWithFullName(fullName)     }
 
     override fun retrieveAllDAttachByStatus(uploadStatus: IMAGESTATUS): Flow<List<DpapAttachEntity>> {
        return grievDao.getAllDAttachByStatus(uploadStatus)
     }
 
+}
+
+class LocalPostDatasourceAltImpl(private val grievDaoAlt : GrievanceAltDao) : LocalPostDatasourceAlt {
+    override suspend fun insertAgrievEntryAlt(agrienceModel: AgrievanceAltEntity): Long {
+        return grievDaoAlt.insertAGrievanceAlt(agrienceModel)
+    }
+
+    override suspend fun insertCgrievDetailAlt(cgriev: CgrievTotalAltEntity): Long {
+       return grievDaoAlt.insertCGrievanceEntryAlt(cgriev)
+    }
+
+    override suspend fun insertDattachAlt(dattach: DpapAttachAltEntity): Long {
+       return grievDaoAlt.insertDAttachEntryAlt(dattach)
+    }
+
+    override suspend fun updateCgrievanceAlt(cgriev: CgrievTotalAltEntity) {
+       return grievDaoAlt.updateCgrievanceAlt(cgriev)
+    }
+
+    override suspend fun updateDattachmentAlt(dattach: DpapAttachAltEntity) {
+        return grievDaoAlt.updateDAttachmentAlt(dattach)
+    }
+
+    override fun retrieveAllAgrievanceEntryAlt(): Flow<List<AgrievanceAltEntity>> {
+        return grievDaoAlt.retrieveAgrievanceEntryAlt()
+    }
+
+    override fun retrieveAllCGrievanceEntryAlt(): Flow<List<CgrievTotalAltEntity>> {
+        return grievDaoAlt.retrieveCGrievanceAlt()
+    }
+
+    override fun retrieveAllDpapsEntryAlt(): Flow<List<DpapAttachAltEntity>> {
+       return grievDaoAlt.retrieveAllDAttachmentAlt()
+    }
+
+    override fun retrieveAllCGrievanceWithUsernameAlt(username: String): Flow<List<CgrievTotalAltEntity>> {
+        return  grievDaoAlt.getAllCGrieveWithAgrievsUsernameAlt(username)
+    }
+
+    override fun retrieveAllDAddAttachWithfullNameAlt(fullName: String): Flow<List<DpapAttachAltEntity>> {
+       return grievDaoAlt.retrieveAllDpapsAttachmentInCGrievenceWithFullNameAlt(fullName)
+    }
+
+    override fun retrieveAllDAttachByStatusAlt(uploadStatus: IMAGESTATUS): Flow<List<DpapAttachAltEntity>> {
+     return grievDaoAlt.retrieveAllDAttachByStatusAlt(uploadStatus)
+    }
+
+    override fun retrievAgrievWithCgrievAndDattach(): Flow<List<AgrievWithCgrieAndDattachList>> {
+       return grievDaoAlt.retrieveAgrievWithCgrievAndDattach()
+    }
 
 }

@@ -50,4 +50,22 @@ interface PostRepository {
     suspend fun updateCgrievance(cgriev: CgrievTotalEntity)
 
     suspend fun updateDattachment(dattach: DpapAttachEntity)
+
+    //**********************ALTERNATIVE*****************************
+    suspend fun insertAgrievEntryAlt(agrienceModel: AgrievanceAltEntity) : Long
+
+    suspend fun insertCgrievDetailAlt(cgriev : CgrievTotalAltEntity) : Long
+
+    suspend fun insertDattachAlt(dattach : DpapAttachAltEntity) : Long
+
+    suspend fun updateCgrievanceAlt(cgriev: CgrievTotalAltEntity)
+
+    suspend fun updateDattachmentAlt(dattach: DpapAttachAltEntity)
+
+    fun retrieveDattachByStatusAlt(uploadStatus : IMAGESTATUS) : Flow<List<DpapAttachAltEntity>>
+
+    fun retrieveCgrievanceAlt() : Flow<List<CgrievTotalAltEntity>>
+
+    fun retrieveAgrieveWithCgrievAndDattach() : Flow<List<AgrievWithCgrieAndDattachList>>
+
 }

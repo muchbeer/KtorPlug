@@ -6,7 +6,10 @@ import com.muchbeer.ktorplug.Converters
 import com.muchbeer.ktorplug.data.db.OilDatabase.Companion.LATEST_VERSION
 
 @Database(entities = [AgrievanceEntity::class, CgrievanceEntity::class, BpapDetailEntity::class,
-                     CgrievTotalEntity::class, DpapAttachEntity::class],
+                     CgrievTotalEntity::class, DpapAttachEntity::class,
+    CgrievTotalAltEntity::class, AgrievanceAltEntity::class, DpapAttachAltEntity::class
+                    ],
+
    // autoMigrations = [AutoMigration (from = 3, to = 4) ],
     version = LATEST_VERSION,
     exportSchema = true)
@@ -14,10 +17,10 @@ import com.muchbeer.ktorplug.data.db.OilDatabase.Companion.LATEST_VERSION
 abstract class OilDatabase() : RoomDatabase() {
 
     abstract fun grievDao() : GrievanceDao
-    abstract fun papDao() : PapDao
+    abstract fun papDao() : GrievanceAltDao
 
     companion object {
-        const val LATEST_VERSION = 4
+        const val LATEST_VERSION = 5
         @Volatile
         private var INSTANCE : OilDatabase? = null
 

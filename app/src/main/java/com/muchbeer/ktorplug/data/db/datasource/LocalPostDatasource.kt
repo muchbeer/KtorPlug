@@ -33,9 +33,35 @@ interface LocalPostDatasource {
 
     fun retrieveAllCGrievanceWithUsername(username : String) : Flow<List<CgrievTotalEntity>>
 
-    fun retrieveDAddAttachWithfullName(fullName: String) : Flow<List<DpapAttachEntity>>
+    fun retrieveAllDAddAttachWithfullName(fullName: String) : Flow<List<DpapAttachEntity>>
 
     fun retrieveAllDAttachByStatus(uploadStatus : IMAGESTATUS) : Flow<List<DpapAttachEntity>>
 
-   // fun retrieveAllDAttachmentUploads() : Flow<List<DpapAttachEntity>>
+}
+
+interface LocalPostDatasourceAlt {
+    suspend fun insertAgrievEntryAlt(agrienceModel: AgrievanceAltEntity) : Long
+
+    suspend fun insertCgrievDetailAlt(cgriev : CgrievTotalAltEntity) : Long
+
+    suspend fun insertDattachAlt(dattach : DpapAttachAltEntity) : Long
+
+    suspend fun updateCgrievanceAlt(cgriev: CgrievTotalAltEntity)
+
+    suspend fun updateDattachmentAlt(dattach: DpapAttachAltEntity)
+
+    fun retrieveAllAgrievanceEntryAlt() : Flow<List<AgrievanceAltEntity>>
+
+    fun retrieveAllCGrievanceEntryAlt() : Flow<List<CgrievTotalAltEntity>>
+
+    fun retrieveAllDpapsEntryAlt() : Flow<List<DpapAttachAltEntity>>
+
+    fun retrieveAllCGrievanceWithUsernameAlt(username : String) : Flow<List<CgrievTotalAltEntity>>
+
+    fun retrieveAllDAddAttachWithfullNameAlt(fullName: String) : Flow<List<DpapAttachAltEntity>>
+
+    fun retrieveAllDAttachByStatusAlt(uploadStatus : IMAGESTATUS) : Flow<List<DpapAttachAltEntity>>
+
+    fun retrievAgrievWithCgrievAndDattach() : Flow<List<AgrievWithCgrieAndDattachList>>
+
 }

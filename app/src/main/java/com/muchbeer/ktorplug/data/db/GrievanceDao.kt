@@ -40,11 +40,11 @@ interface GrievanceDao {
     suspend fun insertDAttachEntryList(dAttachs: List<DpapAttachEntity>)
 
     //************Retrieve from a selection of field
-    @Query("SELECT * FROM cgrievtotalentity WHERE a_username = :username")
-    fun getAllGrieveWithPaps(username : String) : Flow<List<CgrievTotalEntity>>
+   @Query("SELECT * FROM cgrievtotalentity WHERE a_username = :username")
+    fun getAllCGrieveWithPapsUsername(username : String) : Flow<List<CgrievTotalEntity>>
 
     @Query("SELECT * FROM dattachentity WHERE c_fullname = :fullName")
-    fun getAllDpapsAttachmentInCGrievence(fullName: String) : Flow<List<DpapAttachEntity>>
+    fun getAllDpapsAttachmentInCGrievenceWithFullName(fullName: String) : Flow<List<DpapAttachEntity>>
 
     @Query("SELECT * FROM dattachentity WHERE image_status = :imageStatus")
     fun getAllDAttachByStatus(imageStatus: IMAGESTATUS) : Flow<List<DpapAttachEntity>>
@@ -74,4 +74,10 @@ interface GrievanceDao {
 
     @Update
     suspend fun updateDAttachment(dAttach: DpapAttachEntity)
+
+    @Update
+    suspend fun updateAgrievance(agrievance: AgrievanceEntity)
+
+    @Update
+    suspend fun updateBgrievance(bpapGriev : BpapDetailEntity)
 }

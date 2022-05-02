@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.muchbeer.ktorplug.data.db.datasource.LocalPostDatasource
+import com.muchbeer.ktorplug.data.db.datasource.LocalPostDatasourceAlt
 import com.muchbeer.ktorplug.data.remote.datasource.RemoteDataSource
 import com.muchbeer.ktorplug.data.remote.datasource.RemoteDataSourceImpl
 import com.muchbeer.ktorplug.repository.DataStorePref
@@ -97,8 +98,9 @@ object ApiModule {
     @Provides
     fun providePostRepository(remoteDS: RemoteDataSource,
                                 localDS : LocalPostDatasource,
+                                localDSAlt: LocalPostDatasourceAlt,
                                 @ApplicationContext context: Context) : PostRepository {
-        return PostRepositoryImpl(remoteDS, localDS, context)
+        return PostRepositoryImpl(remoteDS, localDS,  localDSAlt, context)
     }
 
     private val json = kotlinx.serialization.json.Json {
